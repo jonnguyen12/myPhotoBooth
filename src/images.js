@@ -1,4 +1,4 @@
-const spawn = require('child_process').spawn;
+const spawn = require('child_process').spawn
 const fs = require('fs')
 const path = require('path')
 const shell = require('electron').shell
@@ -7,7 +7,7 @@ let images = []
 
 const logErr = err => err && console.error(err)
 
-exports.getDirPath = app => path.join(app.getPath('pictures'), 'photobooth')
+exports.getDirPath = app => path.join(app.getPath('pictures'), 'photobombth')
 
 exports.mkdir = picturesPath => {
   fs.stat(picturesPath, (err, stats) => {
@@ -15,25 +15,24 @@ exports.mkdir = picturesPath => {
       return logError(err)
     else if (err || !stats.isDirectory())
       fs.mkdir(picturesPath, logError)
-
   })
 }
 
 exports.save = (picturesPath, contents, done) => {
-  const base64Data = contents.replace(/^data:image\/png;base64,/,'')
+  const base64Data = contents.replace(/^data:image\/png;base64,/, '')
   const fileName = `photo-${new Date().getTime()}.png`
   const imgPath = path.join(picturesPath, fileName)
-  fs.writeFile(imgPath, base64Data, {encoding: 'base64'}, err => {
+  fs.writeFile(imgPath, base64Data, { encoding: 'base64' }, err => {
     if (err) return logErr(err)
+
     done(null, imgPath)
-
   })
-
 }
 
 exports.rm = (index, done) => {
   fs.unlink(images[index], err => {
-    if (err) logErr(err)
+    if (err) return logErr(err)
+
     images.splice(index, 1)
     done()
   })
@@ -46,7 +45,6 @@ exports.cache = imgPath => {
 
 exports.getFromCache = index => {
   return images[index]
-
 }
 
 const openCmds = {
@@ -58,8 +56,7 @@ const openCmds = {
 exports.openDir = dirPath => {
   const cmd = openCmds[process.platform]
   if (cmd)
-    spawn(cmd, [dirPath])
-  else {
+    spawn(cmd, [ dirPath ])
+  else
     shell.showItemInFolder(dirPath)
-  }
 }

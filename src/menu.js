@@ -1,16 +1,20 @@
 const electron = require('electron')
+
 const images = require('./images')
-const {app, shell} = electron
+
+const app = electron.app
+const shell = electron.shell
 
 function enabledCycledEffect(items) {
-  const nonEffectMenuOffSet = 2
+  const nonEffectMenuOffset = 2
   const selectedIndex = items.findIndex(item => item.checked)
-  const nextIndex = selectedIndex + 1 < items.length ? selectedIndex + 1: nonEffectMenuOffSet
+  const nextIndex = selectedIndex + 1 < items.length ? selectedIndex + 1 : nonEffectMenuOffset
   items[nextIndex].checked = true
 }
 
 module.exports = mainWindow => {
   const template = [
+
     {
       label: 'Effects',
       submenu: [
@@ -23,7 +27,7 @@ module.exports = mainWindow => {
           }
         },
         {
-          type: 'seperator'
+          type: 'separator'
         },
         {
           label: 'Vanilla',
@@ -32,15 +36,18 @@ module.exports = mainWindow => {
         },
         {
           label: 'Ascii',
-          type: radio,
+          type: 'radio',
           click: _ => mainWindow.webContents.send('effect-choose', 'ascii')
-
         },
         {
           label: 'Daltonize',
           type: 'radio',
+          click: _ => mainWindow.webContents.send('effect-choose', 'daltonize')
+        },
+        {
+          label: 'Filmgrain',
+          type: 'radio',
           click: _ => mainWindow.webContents.send('effect-choose', 'filmgrain')
-
         },
         {
           label: 'Hex',
@@ -51,7 +58,6 @@ module.exports = mainWindow => {
           label: 'kaleidoscope',
           type: 'radio',
           click: _ => mainWindow.webContents.send('effect-choose', 'kaleidoscope')
-
         },
         {
           label: 'Mirror',
@@ -97,49 +103,51 @@ module.exports = mainWindow => {
     },
     {
       label: 'View',
-      submenu:[{
-        label: 'Photos Directory',
-        accelerator: '',
-        click: _ => images.openDir(images.getDirPath(app))
-
-      }, {
-        label: 'Reload',
-        accelerator: 'CmdOrCtrl+R',
-        click: (item, focusedWindow) => {
-          if (focusedWindow) {
-            focusedWindow.reload()
+      submenu: [
+        {
+          label: 'Photos Directory',
+          accelerator: '',
+          click: _ => images.openDir(images.getDirPath(app))
+        },
+        {
+          label: 'Reload',
+          accelerator: 'CmdOrCtrl+R',
+          click: (item, focusedWindow) => {
+            if (focusedWindow)
+              focusedWindow.reload()
           }
-        }
-      },
-      {
-        label: 'Toggle Developer Tools',
-        accelerator: ( _ => {
-          if (process.platform == 'darwin') return 'Alt+Command+I'
-          else return 'Ctrl+Shift+I'
-        })(),
-        click: function(item, focusedWindow) {
-          if (focusedWindow)
-            focusedWindow.toggleDevTools()
-        }
-      }
-    ]
-  },
-  {
-    label: 'Window',
-    role: 'window',
-    submenu: [
-      {
-        label: 'Minimize',
-        accelerator: 'CmdOrCtrl+M',
-        role: 'minimize'
-      },
-      {
-        label: 'Close',
-        accelerator: 'CmdOrCtrl+W',
-        role: 'close'
-      }
-    ]
-  }
+        },
+        {
+          label: 'Toggle Developer Tools',
+          accelerator: (_ => {
+            if (process.platform == 'darwin')
+              return 'Alt+Command+I'
+            else
+              return 'Ctrl+Shift+I'
+          })(),
+          click: function(item, focusedWindow) {
+            if (focusedWindow)
+              focusedWindow.toggleDevTools()
+          }
+        },
+      ]
+    },
+    {
+      label: 'Window',
+      role: 'window',
+      submenu: [
+        {
+          label: 'Minimize',
+          accelerator: 'CmdOrCtrl+M',
+          role: 'minimize'
+        },
+        {
+          label: 'Close',
+          accelerator: 'CmdOrCtrl+W',
+          role: 'close'
+        },
+      ]
+    }
   ]
 
   if (process.platform == 'darwin') {
@@ -147,43 +155,42 @@ module.exports = mainWindow => {
     template.unshift({
       label: name,
       submenu: [
-          {
-            label: 'About ' + name,
-            role: 'about'
-          },
-          {
-            type: 'separator'
-          },
-          {
-            label: 'Hide ' + name,
-            accelerator: 'Command+H',
-            role: 'hide'
-          },
-          {
-            label: 'Hide Others',
-            accelerator: 'Command+Shift+H',
-            role: 'hideothers'
-          },
-          {
-            label: 'Show All',
-            role: 'unhide'
-          },
-          {
-            type: 'separator'
-          },
-          {
-            label: 'Quit',
-            accelerator: 'Command+Q',
-            click: _ => { app.quit() }
-          },
-        ]
+        {
+          label: 'About ' + name,
+          role: 'about'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Hide ' + name,
+          accelerator: 'Command+H',
+          role: 'hide'
+        },
+        {
+          label: 'Hide Others',
+          accelerator: 'Command+Shift+H',
+          role: 'hideothers'
+        },
+        {
+          label: 'Show All',
+          role: 'unhide'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Quit',
+          accelerator: 'Command+Q',
+          click: _ => { app.quit() }
+        },
+      ]
     })
-
-    var windowMenu = template.find(m => {return .role === 'window'})
+    var windowMenu = template.find(function(m) { return m.role === 'window' })
     if (windowMenu) {
       windowMenu.submenu.push(
         {
-          type:'seperator'
+          type: 'separator'
         },
         {
           label: 'Bring All to Front',
@@ -192,5 +199,6 @@ module.exports = mainWindow => {
       )
     }
   }
+
   return template
 }
