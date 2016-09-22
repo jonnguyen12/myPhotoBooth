@@ -22,7 +22,9 @@ exports.save = (picturesPath, contents, done) => {
   const base64Data = contents.replace(/^data:image\/png;base64,/, '')
   const fileName = `photo-${new Date().getTime()}.png`
   const imgPath = path.join(picturesPath, fileName)
-  fs.writeFile(imgPath, base64Data, { encoding: 'base64' }, err => {
+  fs.writeFile(imgPath, base64Data, {
+    encoding: 'base64'
+  }, err => {
     if (err) return logErr(err)
 
     done(null, imgPath)
@@ -56,7 +58,7 @@ const openCmds = {
 exports.openDir = dirPath => {
   const cmd = openCmds[process.platform]
   if (cmd)
-    spawn(cmd, [ dirPath ])
+    spawn(cmd, [dirPath])
   else
     shell.showItemInFolder(dirPath)
 }
